@@ -13,6 +13,9 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="models">
+      <UniqueIdentifier>{4e7811e9-d6ed-430c-8d21-14b0770eeef0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="desarrollopa.cpp">
@@ -158,5 +161,16 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <Object Include="models\bubble.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="models\fire.obj">
+      <Filter>models</Filter>
+    </Object>
+    <Object Include="models\waterdrop.obj">
+      <Filter>models</Filter>
+    </Object>
   </ItemGroup>
 </Project>
