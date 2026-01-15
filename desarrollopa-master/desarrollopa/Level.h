@@ -19,7 +19,7 @@ public:
     void SetFailed(bool v) { failed = v; }
     bool IsFailed() const { return failed; }
 
-    // Actualiza la escena subyacente
+    // Actualiza la escena 
     void Update(const float& time) {
         if (scene) scene->Update(time);
     }

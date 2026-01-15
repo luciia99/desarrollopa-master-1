@@ -3,9 +3,7 @@
 #include "Vector3D.h"
 
 struct Particle {
-    Solid* obj;      // objeto visual (burbuja o fuego)
+    Solid* obj = nullptr;     
     Vector3D velocity;
-    float life;      // tiempo de vida en segundos
+    float life = 0.0f;         
 };
-
-

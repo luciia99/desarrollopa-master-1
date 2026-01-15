@@ -3,25 +3,33 @@
 #include "EmmiterConfiguration.h"
 #include <GL/glut.h>
 #include <cmath>
+#include "ModelLoader.h"
+#include <iostream>
 
 Player::Player()
     : Entity(), health(3), moveSpeed(0.2f), bubbleEmitter(nullptr)
 {
-    //hacemos que la particula base sea una esfera pequeña que será la burbuja
-    Sphere* bubble = new Sphere();
-    bubble->SetRadius(0.15f);
-    bubble->SetColor(Color(0.4f, 0.7f, 1.0f, 0.7f));
+    // cargar y escalar modelo OBJ de burbuja
+    ModelLoader loader;
+    loader.SetScale(0.05f); // ajustar escala para coincidir con tamaño antiguo de esfera
 
-    //Configuramos el emisor
-    //partículas por emisión
-    //intervalo (ms)
-    EmmiterConfiguration config(1, 50, bubble );
-    config.SetParticleType(ParticleType::WATER);
-    config.SetParticleLife(1.5f);
-    config.SetParticleSpeed(5.0f);
-    config.SetParticleDamage(1);
+    if (!loader.LoadModel("models/bubble.obj")) { // cargar archivo OBJ
+        std::cerr << "Fallo al cargar bubble.obj" << std::endl;
+        return;
+    }
 
-    //Creamos el emisor
+    // obtener modelo cargado y establecer color
+    Model* bubbleModel = new Model(loader.GetModel());
+    bubbleModel->SetColor(Color(0.4f, 0.7f, 1.0f, 0.7f));
+
+    // configurar emisor con el modelo OBJ
+    EmmiterConfiguration config(1, 50, bubbleModel);
+    config.SetParticleType(ParticleType::WATER);  // tipo de partícula agua
+    config.SetParticleLife(1.5f);                 // duración de cada partícula
+    config.SetParticleSpeed(5.0f);                // velocidad inicial
+    config.SetParticleDamage(1);                  // daño que inflige
+
+    // crear emisor de burbujas
     bubbleEmitter = new Emmiter(config);
 }
 
@@ -29,76 +37,75 @@ void Player::Shoot(int mouseX, int mouseY)
 {
     if (!bubbleEmitter) return;
 
-    // Solo necesitamos disparar horizontalmente
-    Vector3D direction(-1.0f, 0.0f, 0.0f); // siempre horizontal izquierda
+    // disparo siempre horizontal hacia la izquierda
+    Vector3D direction(-1.0f, 0.0f, 0.0f);
 
-    // Configuramos la velocidad de la burbuja
+    // configurar velocidad del emisor
     bubbleEmitter->SetSpeed(direction * 5.0f);
 
-    // Emitimos la burbuja
+    // emitir una burbuja
     bubbleEmitter->EmitOnce();
 }
 
 void Player::Update(const float& time, const Vector3D& gravity)
 {
-    Entity::Update(time, gravity);
+    Entity::Update(time, gravity); // actualizar física y posición de la entidad
 
     if (bubbleEmitter)
     {
-        bubbleEmitter->SetPosition(GetCoordinates());
-
-        bubbleEmitter->Update(time, gravity);
+        bubbleEmitter->SetPosition(GetCoordinates()); // sincronizar posición con jugador
+        bubbleEmitter->Update(time, gravity);         // actualizar partículas
     }
 }
 
 void Player::MoveUp()
 {
     Vector3D pos = GetCoordinates();
-    pos.SetY(pos.GetY() + moveSpeed);
+    pos.SetY(pos.GetY() + moveSpeed); // incrementar posición vertical
     SetCoordinates(pos);
 }
 
 void Player::MoveDown()
 {
     Vector3D pos = GetCoordinates();
-    pos.SetY(pos.GetY() - moveSpeed);
+    pos.SetY(pos.GetY() - moveSpeed); // decrementar posición vertical
     SetCoordinates(pos);
 }
 
 void Player::Damage(int d)
 {
-    health -= d;
-    if (health < 0) health = 0;
+    health -= d;     // reducir vida
+    if (health < 0)  // limitar vida mínima a 0
+        health = 0;
 }
 
 int Player::GetHealth() const
 {
-    return health;
+    return health; // retornar vida actual
 }
 
 Solid* Player::Clone()
 {
-    return new Player(*this);
+    return new Player(*this); // crear copia del jugador
 }
-
 
 void Player::Render() {
     glPushMatrix();
     Vector3D pos = GetCoordinates();
     glTranslatef(pos.GetX(), pos.GetY(), pos.GetZ());
 
-    // Opcional: escalar el modelo
-     glScalef(0.4f, 0.4f, 0.4f);
+    // opcional: escalar modelo
+    glScalef(0.5f, 0.5f, 0.5f);
 
     glColor4f(0.3f, 0.6f, 1.0f, 1.0f);
-    waterdrop.Render(); // dibuja el modelo OBJ
+    waterdrop.Render(); // dibujar modelo OBJ del jugador
     glPopMatrix();
 
-    // Renderizar las burbujas
+    // renderizar burbujas
     if (bubbleEmitter)
         bubbleEmitter->Render();
 }
-Player::~Player() {
-    delete bubbleEmitter;
-}
 
+Player::~Player() {
+    delete bubbleEmitter; // liberar memoria del emisor de burbujas
+}

@@ -29,7 +29,6 @@ public:
     // Renderiza el texto
     virtual void Render() override;
 
-    // Clone: imprescindible para que Text deje de ser abstracta
     virtual Solid* Clone() override { return new Text(*this); }
 
     virtual ~Text() {}

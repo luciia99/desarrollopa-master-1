@@ -6,18 +6,17 @@
 
 //las llamas lanzan el fuego cada 1.5 segundos
 Enemy::Enemy(Player* p) : Entity(), health(1), player(p), active(true), radius(0.35f),
-    fireEmitter(nullptr), fireTimer(0.0f), fireInterval(1.5f){
-    SetColor(Color(1.0f, 0.4f, 0.1f, 1.0f)); // llamita
+fireEmitter(nullptr), fireTimer(0.0f), fireInterval(1.5f)
+{
+    SetColor(Color(1.0f, 0.4f, 0.1f, 1.0f)); // llamita color
 
-    //la particula base va a ser un fuego
+    // Particle base is a sphere
     Sphere* fire = new Sphere();
     fire->SetRadius(0.15f);
-    fire->SetColor(Color(1.0f, 0.2f, 0.0f, 0.9f));
+    fire->SetColor(Color(1.0f, 0.2f, 0.0f, 0.9f)); // RED FIRE
 
-    //partículas por disparo
-    //intervalo interno
+    // Configure emitter
     EmmiterConfiguration config(1, 50, fire);
-
     config.SetParticleType(ParticleType::FIRE);
     config.SetParticleLife(0.8f);
     config.SetParticleSpeed(1.0f);
@@ -25,7 +24,6 @@ Enemy::Enemy(Player* p) : Entity(), health(1), player(p), active(true), radius(0
 
     fireEmitter = new Emmiter(config);
 }
-
 
 void Enemy::Damage(int d){
     health -= d;

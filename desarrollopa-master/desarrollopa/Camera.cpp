@@ -1,4 +1,4 @@
-#include <GL/glut.h> // Añade esta línea al inicio del archivo para definir glRotatef
+#include <GL/glut.h> 
 #include "Camera.h"
 
 // Implementación de la cámara utilizando transformaciones OpenGL

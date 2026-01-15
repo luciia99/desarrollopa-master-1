@@ -1,7 +1,7 @@
 #pragma once
 #include "Solid.h"
 
-// Clase base ligera para entidades del juego 
+// Clase para entidades del juego 
 class Entity : public Solid {
 public:
     Entity() : Solid() {}

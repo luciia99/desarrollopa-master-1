@@ -15,7 +15,6 @@ public:
 	Model() = default;
 
 	//permite añadir un triángulo al vector de triángulo
-	//se añade por referencia constante para no hacer copias innecesarias
 	void AddTriangle(const Triangle& triangle);
 
 	// vacía el vector de triángulos
@@ -28,10 +27,8 @@ public:
 
 	Solid* Clone() override;
 
-	// Cambia Vector3Df por Vector3D para que coincida con la definición existente
 	void SetPosition(const Vector3D& pos) { SetCoordinates(pos); }
 
-	// Añadir este método público a la clase Model
 	const std::vector<Triangle>& GetTriangles() const { return triangles; }
 };
 
