@@ -61,7 +61,46 @@ Vector3D ModelLoader::parseObjLineToVector3D(const string& line) {
 	return vectorPoint * this->GetScale();
 }
 
+std::vector<Triangle> ModelLoader::parseObjFace(const std::string& line) {
+	std::vector<Triangle> triangles; // vector donde guardaremos los triángulos resultantes
+	std::istringstream ss(line);
+	std::string token;
+	ss >> token; // descartamos la "f"
 
+	std::vector<int> vertexIndices;
+	std::vector<int> normalIndices;
+
+	// leer cada vértice de la cara
+	while (ss >> token) {
+		int v = 0, n = 0;
+		size_t firstSlash = token.find('/');
+		size_t lastSlash = token.rfind('/');
+
+		v = std::stoi(token.substr(0, firstSlash)); // índice de vértice
+
+		if (firstSlash != std::string::npos) {
+			n = std::stoi(token.substr(lastSlash + 1)); // índice de normal
+		}
+
+		vertexIndices.push_back(v);
+		normalIndices.push_back(n);
+	}
+
+	// triangulación tipo “fan”: crea triángulos desde el primer vértice
+	for (size_t i = 1; i + 1 < vertexIndices.size(); ++i) {
+		Vector3D v0 = fileVertex[vertexIndices[0] - 1];
+		Vector3D v1 = fileVertex[vertexIndices[i] - 1];
+		Vector3D v2 = fileVertex[vertexIndices[i + 1] - 1];
+
+		Vector3D n0 = (normalIndices[0] > 0) ? fileNormals[normalIndices[0] - 1] : Vector3D(0, 1, 0);
+		Vector3D n1 = (normalIndices[i] > 0) ? fileNormals[normalIndices[i] - 1] : Vector3D(0, 1, 0);
+		Vector3D n2 = (normalIndices[i + 1] > 0) ? fileNormals[normalIndices[i + 1] - 1] : Vector3D(0, 1, 0);
+
+		triangles.push_back(Triangle(v0, v1, v2, n0, n1, n2));
+	}
+
+	return triangles;
+}
 Triangle ModelLoader::parseObjTriangle(const string& line) {
 	//En el archivo obj, las caras se definen a partir de los vértices y normales previos.
 	//Éste método convierte esa info en un objeto de la clase Triangle
@@ -128,8 +167,10 @@ bool ModelLoader::LoadModel(const string& filePath)
 				}
 				else if (line[0] == 'f') //ejemplo: f 2//4 5//4 6//4 => cara, triángulo
 				{
-					Triangle triangle = this->parseObjTriangle(line);
-					this->model.AddTriangle(center(triangle));
+					std::vector<Triangle> tris = parseObjFace(line);
+					for (Triangle& t : tris) {
+						model.AddTriangle(center(t));
+					}
 					//yhis->model.AddTriangle(triangle)
 				}
 			}

@@ -30,5 +30,8 @@ public:
 
 	// Cambia Vector3Df por Vector3D para que coincida con la definición existente
 	void SetPosition(const Vector3D& pos) { SetCoordinates(pos); }
+
+	// Añadir este método público a la clase Model
+	const std::vector<Triangle>& GetTriangles() const { return triangles; }
 };
 

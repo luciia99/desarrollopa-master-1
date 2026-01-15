@@ -49,5 +49,6 @@ public:
 
 	void Clear();
 
+	std::vector<Triangle> parseObjFace(const std::string& line);
 };
 

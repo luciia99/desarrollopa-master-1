@@ -18,6 +18,7 @@ public:
 
     void SetCoordinates(const Vector3D& pos) { position = pos; }
     void SetSpeed(const Vector3D& spd) { speed = spd; }
+    void SetPosition(const Vector3D& pos) { position = pos; }
 
     void Update(float dt, const Vector3D& gravity);
     void Render();

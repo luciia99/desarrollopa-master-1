@@ -39,7 +39,7 @@ void Enemy::Update(const float& time, const Vector3D& gravity){
     if (!active) return;
     //movimiento
     Vector3D pos = GetCoordinates();
-    pos.SetX(pos.GetX() + 2.0f * time); // se mueve hacia la derecha
+    pos.SetX(pos.GetX() + 5.0f * time); // se mueve hacia la derecha
     SetCoordinates(pos);
 
 	//disparo de fuego

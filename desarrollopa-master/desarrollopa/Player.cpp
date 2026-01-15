@@ -9,7 +9,7 @@ Player::Player()
 {
     //hacemos que la particula base sea una esfera pequeña que será la burbuja
     Sphere* bubble = new Sphere();
-    bubble->SetRadius(0.1f);
+    bubble->SetRadius(0.15f);
     bubble->SetColor(Color(0.4f, 0.7f, 1.0f, 0.7f));
 
     //Configuramos el emisor
@@ -29,42 +29,26 @@ void Player::Shoot(int mouseX, int mouseY)
 {
     if (!bubbleEmitter) return;
 
-    //obtenemos las matrices
-    int viewport[4];
-    double modelview[16];
-    double projection[16];
-    double worldX, worldY, worldZ;
+    // Solo necesitamos disparar horizontalmente
+    Vector3D direction(-1.0f, 0.0f, 0.0f); // siempre horizontal izquierda
 
-    glGetIntegerv(GL_VIEWPORT, viewport);
-    glGetDoublev(GL_MODELVIEW_MATRIX, modelview);
-    glGetDoublev(GL_PROJECTION_MATRIX, projection);
-
-    //Invertimos Y (OpenGL)
-    mouseY = viewport[3] - mouseY;
-
-    gluUnProject(mouseX, mouseY, 0.0, modelview, projection, viewport, &worldX, &worldY, &worldZ);
-
-    Vector3D origin = GetCoordinates();
-    Vector3D target((float)worldX, (float)worldY, 0.0f);
-    Vector3D direction = target - origin;
-
-    //Normalizamos
-    float len = sqrt(direction * direction);
-    if (len < 0.0001f) return;
-    direction = direction / len;
-
-    //Colocamos el emisor en el jugador
-    bubbleEmitter->SetCoordinates(origin);
+    // Configuramos la velocidad de la burbuja
     bubbleEmitter->SetSpeed(direction * 5.0f);
 
-	//empezamos la emisión
-    bubbleEmitter->Update(0.02f, Vector3D(0, 0, 0));
+    // Emitimos la burbuja
+    bubbleEmitter->EmitOnce();
 }
 
-void Player::Update(const float& time, const Vector3D& gravity) {
+void Player::Update(const float& time, const Vector3D& gravity)
+{
     Entity::Update(time, gravity);
+
     if (bubbleEmitter)
+    {
+        bubbleEmitter->SetPosition(GetCoordinates());
+
         bubbleEmitter->Update(time, gravity);
+    }
 }
 
 void Player::MoveUp()
@@ -102,13 +86,18 @@ void Player::Render() {
     glPushMatrix();
     Vector3D pos = GetCoordinates();
     glTranslatef(pos.GetX(), pos.GetY(), pos.GetZ());
-    glColor4f(0.0f, 0.5f, 1.0f, 1.0f);
-    glutSolidSphere(0.35f, 16, 16);
+
+    // Opcional: escalar el modelo
+     glScalef(0.4f, 0.4f, 0.4f);
+
+    glColor4f(0.3f, 0.6f, 1.0f, 1.0f);
+    waterdrop.Render(); // dibuja el modelo OBJ
     glPopMatrix();
 
-    if (bubbleEmitter) bubbleEmitter->Render();
+    // Renderizar las burbujas
+    if (bubbleEmitter)
+        bubbleEmitter->Render();
 }
-
 Player::~Player() {
     delete bubbleEmitter;
 }
