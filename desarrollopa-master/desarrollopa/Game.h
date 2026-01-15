@@ -50,7 +50,6 @@ public:
     void Render();
     void Update(const float& time);
     void ProcessKeyPressed(unsigned char key, int px, int py);
-    void ProcessMouseMovement(int x, int y);
     void ProcessMouseClicked(int button, int state, int x, int y);
 };
 

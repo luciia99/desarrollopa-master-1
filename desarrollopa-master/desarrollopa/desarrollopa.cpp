@@ -88,11 +88,6 @@ void keyPressed(unsigned char key, int px, int py)
     glutPostRedisplay();
 }
 
-void mouseMoved(int x, int y)
-{
-    game.ProcessMouseMovement(x, y);
-    glutPostRedisplay();
-}
 
 void mouseClicked(int button, int state, int x, int y)
 {
@@ -139,7 +134,6 @@ int main(int argc, char** argv)
     glutDisplayFunc(display);                                       // tratamiento del evento de repintado de la ventana
     glutKeyboardFunc(keyPressed);                                   // tratamiento del evento de tecla pulsada
     glutSpecialFunc(specialKey);                                    // tratamiento del evento de tecla especial pulsada
-    glutMotionFunc(mouseMoved);                                     // tratamiento del evento de movimiento del ratón
     glutMouseFunc(mouseClicked);                                    // tratamiento del evento de clic del ratón
     glutIdleFunc(idle);                                             // para cuando no hay eventos que tratar         
 

@@ -21,8 +21,7 @@ Game::Game()
     initialMilliseconds = duration_cast<milliseconds>(
         system_clock::now().time_since_epoch()
     );
-    lastUpdatedTime = 0;
-
+    lastUpdatedTime = duration_cast<milliseconds>( system_clock::now().time_since_epoch()).count();
     // Inicializar acumuladores de jugabilidad
     healthAccumulator = 0.0f;
     scoreAccumulator = 0.0f;
@@ -79,13 +78,34 @@ void Game::Update(const float& time)
     float dt = (currentTime.count() - lastUpdatedTime) / 1000.0f;
 
     // Actualizamos la escena
-    sceneManager->UpdateCurrent(TIME_INCREMENT);
+    sceneManager->UpdateCurrent(dt);
 
     // Actualizar EnemyManager con dt real
     if (enemyManager)
         enemyManager->Update(dt, sceneManager->GetCurrent()->GetScene());
 
     lastUpdatedTime = currentTime.count();
+
+    //gestionamos las colisiones del fuego con el jugador
+    if (enemyManager && player){
+        for (Enemy* e : enemyManager->GetEnemies()){
+            Emmiter* fire = e->GetFireEmitter();
+            if (!fire) continue;
+
+            const auto& particles = fire->GetParticles();
+            Vector3D pPos = player->GetCoordinates();
+
+            for (const auto& part : particles){
+                Vector3D diff = part.obj->GetCoordinates() - pPos;
+                float dist2 = diff * diff;
+
+                if (dist2 < 0.3f * 0.3f){
+                    player->Damage(1);
+                    break;
+                }
+            }
+        }
+    }
 
     // Actualizar acumuladores
     healthAccumulator += dt;
@@ -114,12 +134,13 @@ void Game::ProcessKeyPressed(unsigned char key, int px, int py)
     if (key == 's' || key == 'S') player->MoveDown();
 }
 
-void Game::ProcessMouseMovement(int x, int y)
-{
-    // Sin uso adicional por ahora
-}
 
 void Game::ProcessMouseClicked(int button, int state, int x, int y)
 {
-    // Sin uso adicional por ahora
+    if (!player || gameOver || victory) return;
+
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
+    {
+        player->Shoot(x, y);
+    }
 }

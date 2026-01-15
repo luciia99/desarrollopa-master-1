@@ -72,9 +72,6 @@
     <ClCompile Include="Text.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="FirstPersonCamera.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="Coordinate.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
@@ -88,6 +85,18 @@
       <Filter>Archivos de origen</Filter>
     </ClCompile>
     <ClCompile Include="HUD.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Player.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="EnemyManager.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Enemy.cpp">
+      <Filter>Archivos de origen</Filter>
+    </ClCompile>
+    <ClCompile Include="Particle.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
   </ItemGroup>
@@ -149,9 +158,6 @@
     <ClInclude Include="Text.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="FirstPersonCamera.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="Coordinate.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
@@ -183,6 +189,9 @@
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
     <ClInclude Include="EnemyManager.h">
+      <Filter>Archivos de encabezado</Filter>
+    </ClInclude>
+    <ClInclude Include="Particle.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
   </ItemGroup>

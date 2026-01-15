@@ -1,36 +1,26 @@
 #pragma once
-#include "Solid.h"
 #include <vector>
-#include <chrono>
+#include "Vector3D.h"
+#include "Particle.h"
 #include "EmmiterConfiguration.h"
 
-using namespace std;
-using namespace chrono;
-
-class Emmiter : public Solid
-{
+class Emmiter {
 private:
-	//guarda la configuración del emisor
-	EmmiterConfiguration configuracion;
-	//puntero a solid que guarda las refs a las partículas generadas
-	vector<Solid*> particulas;
-	//almacena tiempo de inicio de la emisión
-	milliseconds initialMilliseconds;
-	//registra el tiempo de cada emisión de una nueva partícula
-	long lastUpdateTime;
-	//guardo la base de la burbuja
-	Solid* baseParticula;
+    std::vector<Particle> particles;
+    Vector3D position;
+    Vector3D speed;
+    EmmiterConfiguration config;   
 
 public:
+    Emmiter(const EmmiterConfiguration& cfg);
 
-	Emmiter(EmmiterConfiguration& config);
+    void EmitOnce();
 
-	//Destructor
-	~Emmiter();
+    void SetCoordinates(const Vector3D& pos) { position = pos; }
+    void SetSpeed(const Vector3D& spd) { speed = spd; }
 
-	void Render();
-	void Update(const float& time);
-	//asi hacemos una copia profunda del emisor
-	Solid* Clone() override { return nullptr; }
+    void Update(float dt, const Vector3D& gravity);
+    void Render();
+
+    const std::vector<Particle>& GetParticles() const { return particles; }
 };
-

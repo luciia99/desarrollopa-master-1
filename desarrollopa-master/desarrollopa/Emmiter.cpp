@@ -1,62 +1,42 @@
-#pragma once
-#include "Enemy.h"
-#include "Player.h"
-#include "Scene.h"
-#include <vector>
-#include <cstdlib> // rand
-#include <ctime>
+#include "Emmiter.h"
+#include "EmmiterConfiguration.h"
+#include "Solid.h"
 
-class EnemyManager {
-private:
-    std::vector<Enemy*> enemies;
-    Player* player;
-    float spawnInterval;       // tiempo entre spawns
-    float timeSinceLastSpawn;  // contador interno
+Emmiter::Emmiter(const EmmiterConfiguration& cfg) : config(cfg){}
 
-public:
-    EnemyManager(Player* p, float interval = 1.0f)
-        : player(p), spawnInterval(interval), timeSinceLastSpawn(0.0f)
+void Emmiter::EmitOnce()
+{
+    for (int i = 0; i < config.GetNumParticulas(); i++)
     {
-        srand(static_cast<unsigned int>(time(0))); // inicializa rand
+        Particle p;
+        p.obj = config.GetParticula()->Clone();
+        p.obj->SetCoordinates(position);
+        p.velocity = speed * config.GetParticleSpeed();
+        p.life = config.GetParticleLife();
+
+        particles.push_back(p);
     }
+}
 
-    ~EnemyManager() {
-        for (Enemy* e : enemies)
-            delete e;
-        enemies.clear();
-    }
+void Emmiter::Update(float dt, const Vector3D& gravity)
+{
+    // Actualizar partículas existentes
+    for (auto it = particles.begin(); it != particles.end();){
+        it->life -= dt;
 
-    // Se llama desde Game::Update
-    void Update(float dt, Scene* scene) {
-        timeSinceLastSpawn += dt;
-
-        if (timeSinceLastSpawn >= spawnInterval) {
-            SpawnEnemy(scene);
-            timeSinceLastSpawn = 0.0f;
+        if (it->life <= 0.0f){
+            delete it->obj;
+            it = particles.erase(it);
+        }else{
+            Vector3D pos = it->obj->GetCoordinates();
+            pos = pos + it->velocity * dt;
+            it->obj->SetCoordinates(pos);
+            ++it;
         }
     }
+}
 
-private:
-    void SpawnEnemy(Scene* scene) {
-        // Elegir tipo según probabilidades
-        int r = rand() % 100;
-        EnemyType type;
-        if (r < 50) type = EnemyType::MEDUSA;       // 0-49
-        else if (r < 80) type = EnemyType::PULPO;   // 50-79
-        else type = EnemyType::TIBURON;             // 80-99
-
-        Enemy* e = new Enemy(type, player);
-
-        // Posición: X fija (-9), Y aleatoria según tipo
-        float y = 0.0f;
-        switch (type) {
-        case EnemyType::MEDUSA:   y = (rand() % 11 - 5) * 0.3f; break; // -1.5 a 1.5
-        case EnemyType::PULPO:    y = (rand() % 9 - 4) * 0.4f;  break; // -1.6 a 1.6
-        case EnemyType::TIBURON:  y = (rand() % 7 - 3) * 0.5f;  break; // -1.5 a 1.5
-        }
-
-        e->SetCoordinates(Vector3D(-9.0f, y, 0.0f));
-        scene->AddGameObject(e);
-        enemies.push_back(e);
-    }
-};
+void Emmiter::Render()
+{
+    for (auto& p : particles) p.obj->Render();
+}

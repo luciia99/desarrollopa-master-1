@@ -4,13 +4,12 @@
 // Implementación de la cámara utilizando transformaciones OpenGL
 void Camera::Render()
 {
-    //Traslación
-    glTranslatef(-position.GetX(), -position.GetY(), -position.GetZ());
-
-    //Rotaciones
-    glRotatef(rotation.GetX(), 1.0, 0.0, 0.0);
-    glRotatef(rotation.GetY(), 0.0, 1.0, 0.0);
-    glRotatef(rotation.GetZ(), 0.0, 0.0, 1.0);
+    glLoadIdentity();
+    gluLookAt(
+        0.0, 0.0, 15.0,   // posición cámara
+        0.0, 0.0, 0.0,    // mira al centro
+        0.0, 1.0, 0.0     // vector up
+    );
 
 }
 
